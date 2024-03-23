@@ -89,3 +89,27 @@ ssh -p 2233 root@10.176.17.67
 ![](./remote_ssh_window.png)
 
 至此，已经能够用vs code在docker中做开发了。
+
+### >>>迁移docker
+
+要下班了，就需要把当前的docker container保存到某个云存储目录里：
+
+```
+docker ps -a
+docker export -o my_ubuntu.tar b8f8bfb4ae52
+```
+
+其中b8f8bfb4ae52就是通过docker ps -a看到的当前的container ID。执行完之后，当前目录下就多了一个my_ubuntu.tar文件。
+
+下次要用时，再次装载、运行：
+
+```
+docker import  my_ubuntu.tar my_ubuntu:haha
+docker run -it -p 2233:22 my_ubuntu:haha bash
+```
+
+在container内部再重新启动一下ssh（也可以配置好自动启动）:
+
+```
+service ssh start
+```
