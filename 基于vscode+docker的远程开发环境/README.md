@@ -14,7 +14,7 @@ Visual Studio Code作为最强IDE（不接受反驳），不仅可以很方便�
 
 以ubuntu镜像为例，使用如下命令在服务器上启动docker：
 
-```
+```bash
 docker pull ubuntu
 docker run -it -p 2233:22 ubuntu:latest bash
 ```
@@ -23,14 +23,14 @@ docker run -it -p 2233:22 ubuntu:latest bash
 
 然后在container内部安装ssh：
 
-```
+```bash
 apt-get update
 apt-get install -y openssh-server
 ```
 
 在启动ssh服务前，需要修改一下配置文件，允许以root登录：
 
-```
+```bash
 apt-get install -y vim
 vim /etc/ssh/sshd_config
 ```
@@ -44,19 +44,19 @@ PermitRootLogin yes
 
 然后就可以启动ssh服务：
 
-```
+```bash
 service ssh start
 ```
 
 docker中的root默认是没有密码的。因此还需要为root设置一个密码以便登录：
 
-```
+```bash
 echo root:123456789 | chpasswd
 ```
 
 现在，从笔记本上可以连接container了：
 
-```
+```bash
 ssh -p 2233 root@10.176.17.67
 ```
 
@@ -94,7 +94,7 @@ ssh -p 2233 root@10.176.17.67
 
 要下班了，就需要把当前的docker container保存到某个云存储目录里：
 
-```
+```bash
 docker ps -a
 docker export -o my_ubuntu.tar b8f8bfb4ae52
 ```
@@ -103,13 +103,13 @@ docker export -o my_ubuntu.tar b8f8bfb4ae52
 
 下次要用时，再次装载、运行：
 
-```
+```bash
 docker import  my_ubuntu.tar my_ubuntu:haha
 docker run -it -p 2233:22 my_ubuntu:haha bash
 ```
 
 在container内部再重新启动一下ssh（也可以配置好自动启动）:
 
-```
+```bash
 service ssh start
 ```
