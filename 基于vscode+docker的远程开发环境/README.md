@@ -96,7 +96,8 @@ ssh -p 2233 root@10.176.17.67
 
 ```bash
 docker ps -a
-docker export -o my_ubuntu.tar b8f8bfb4ae52
+docker commit b8f8bfb4ae52 my_ubuntu_image
+docker save -o my_ubuntu.tar my_ubuntu_image
 ```
 
 其中b8f8bfb4ae52就是通过docker ps -a看到的当前的container ID。执行完之后，当前目录下就多了一个my_ubuntu.tar文件。
@@ -104,8 +105,8 @@ docker export -o my_ubuntu.tar b8f8bfb4ae52
 下次要用时，再次装载、运行：
 
 ```bash
-docker import  my_ubuntu.tar my_ubuntu:haha
-docker run -it -p 2233:22 my_ubuntu:haha bash
+docker load -i my_ubuntu.tar
+docker run -it -p 2233:22 my_ubuntu_image bash
 ```
 
 在container内部再重新启动一下ssh（也可以配置好自动启动）:
