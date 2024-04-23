@@ -29,7 +29,7 @@ class MyMNIST(torch.nn.Module):
         return self._output_layer(x)
 ```
 
-MNIST数据集中的图片都是28x28的灰度图，所以网络的输入层就是28x28=784个节点。输出层共10个节点，每个节点对应0～9这10个数字的得分，得分最高的数字作为网络的最终输出。构造函数里的`hidden_layers`是一个整数列表，每一个整数表示从输入层与输出层之间的每一个隐藏层的节点个数。比如`MyMNIST([256, 32])`就是定义了一个784->256->32->10的四层全连接网络。可以看到，这个参数同时控制了网络的宽度和深度。如果`hidden_layers`为None，则没有隐藏层。由于隐藏层的个数是不定的，所以代码中必须使用动态创建每个隐藏层，并置于list中，方便后续使用。但是从《[Pytorch初体验](../Pytorch初体验/README.md)》中我们得知，处于容器类型内的`torch.nn.Module`实例的参数是不会被`parameters()`方法自动捕获的。为此，我使用了`setattr()`方法，将每个隐藏层都设置为当前对象的一个成员变量，名为`_hidden_layer_<i>`。这样，隐藏层既能被自动捕获，又能在list中享受操作的便利。
+MNIST数据集中的图片都是28x28的灰度图，所以网络的输入层就是28x28=784个节点。输出层共10个节点，每个节点对应0～9这10个数字的得分，得分最高的数字作为网络的最终输出。构造函数里的`hidden_layers`是一个整数列表，每一个整数表示从输入层与输出层之间的每一个隐藏层的节点个数。比如`MyMNIST([256, 32])`就是定义了一个784->256->32->10的四层全连接网络。可以看到，这个参数同时控制了网络的宽度和深度。如果`hidden_layers`为None，则没有隐藏层。由于隐藏层的个数是不定的，所以代码中必须使用循环动态创建每个隐藏层，并置于list中，方便后续使用。但是从《[Pytorch初体验](../Pytorch初体验/README.md)》中我们得知，处于容器类型内的`torch.nn.Module`实例的参数是不会被`parameters()`方法自动捕获的。为此，我使用了`setattr()`方法，将每个隐藏层都设置为当前对象的一个成员变量，名为`_hidden_layer_<i>`。这样，隐藏层既能被自动捕获，又能在list中享受操作的便利。
 
 从`forward()`函数实现可以看出，隐藏层都是使用GELU激活函数。而输出层则不使用激活函数，因为分类问题只需要取得分最大的节点即可，加了激活函数不改变最大值所对应的节点。
 
@@ -133,7 +133,7 @@ torch.onnx.export(model, dummy_input, "mnist.onnx",
         export_params = True)
 ```
 
-导出ONNX格式的`torch.onnx.export()`的第二个参数`dummy_input`稍难理解。导出ONNX的原理是这样的：向模型输入一个数据，执行一遍推理，这个过程中的所有计算过程会被onnx模块记录，作为ONNX流程图。这个`dummy_input`就是用于执行一遍推理的随机输入，没人关心最后是什么结果，只要Tensor的维度、尺寸正确即可。`input_names`和`output_names`是给这个模型的输入输出层取个名字，这样加载ONNX模型后，可以用名字来设置输入、读取结果。之所以设计为数组形式，是考虑到模型的`forward()`可能要接收多个Tensor，返回多个Tensor，所以名字需要与实际模型的输入输出一一对应。`dynamic_axes`指定了哪些Tensor的哪些维度是动态的，是一个dict，key是Tensor名字，value有另一个dict，其key是第几维度，value是这个维度的名称，比如上面代码中，输入的images的第0维是batch_size，输出的images的第0维是batch_size。
+导出ONNX格式的`torch.onnx.export()`的第二个参数`dummy_input`稍难理解。导出ONNX的原理是这样的：向模型输入一个数据，执行一遍推理，这个过程中的所有计算过程会被onnx模块记录，作为ONNX流程图。这个`dummy_input`就是用于执行一遍推理的随机输入，没人关心最后是什么结果，只要Tensor的维度、尺寸正确即可。`input_names`和`output_names`是给这个模型的输入输出层取个名字，这样加载ONNX模型后，可以用名字来设置输入、读取结果。之所以设计为数组形式，是考虑到模型的`forward()`可能要接收多个Tensor，返回多个Tensor，所以名字需要与实际模型的输入输出一一对应。`dynamic_axes`指定了哪些Tensor的哪些维度是动态的，是一个dict，key是Tensor名字，value是另一个dict，其key是第几维度，value是这个维度的名称，比如上面代码中，输入的images的第0维是batch_size，输出的images的第0维是batch_size。
 
 至此，我们就有了Pytorch的模型mnist.model，后续可以使用`torch.load()`重新加载。也有了`mnist.onnx`，作为一个通用格式，可以被其他框架（比如微软的onnxruntime、Intel的openvino和NVIDIA的TensorRT）加载。
 
