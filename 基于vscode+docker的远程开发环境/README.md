@@ -108,15 +108,19 @@ docker run -it ubuntu:latest bash
 ### >>>在Visual Studio Code中安装Remote*插件
 
 我不太清楚具体是哪个插件，但反正将以下这些插件都安装上就能使用远程container开发：
+
 ![](./remote_plugins.png)
 
 之后，在vs code界面左侧工具栏可以看到“远程资源管理器”，其中有一些之前连接过的快捷入口。点击即可连接。如果没有历史记录，可以点击SSH目录的+即可新建连接。
+
 ![](./remote_resources.jpg)
 
 也可以像方法一中那样直接点左下角“打开远程窗口”按钮，连接宿主机。连接宿主机之后，再次进入“远程资源管理器”，并且将上方的选项框选为“开发容器”，即可看到当前宿主机上运行的容器。点击容器右侧的箭头，attach到容器中：
+
 ![](./attach_container.png)
 
 通过如此两步跳跃，可以看到左下角的连接信息变成了“容器ubuntu:latest(wizardly_jepsen)@ipp2-1911”，也就是vs code知道这是一个远程容器。
+
 ![](./container_attached.jpg)
 
 ## 比较
