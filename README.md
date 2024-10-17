@@ -1,5 +1,6 @@
 # Yuxin的博客
 
+* 2024年10月16日 [Raft benchmark](./Raft_benchmark/README.md)
 * 2024年08月20日 [cubin的使用——以fmha为例](./cubin的使用——以fmha为例/README.md)
 * 2024年08月20日 [动态链接的本质](./动态链接的本质/README.md)
 * 2024年06月30日 [Remote-SSH换CPU架构后连接失败](./Remote-SSH换CPU架构后连接失败/README.md)

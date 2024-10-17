@@ -1,0 +1,7 @@
+name: raft_ivf_flat
+groups:
+  base:
+    build:
+      nlist: [10240]
+    search:
+      nprobe: [20]

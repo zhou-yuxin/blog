@@ -1,0 +1,6 @@
+- name: deep-image-96-inner-3M
+  base_file: deep-image-96-inner-3M/base.fbin
+  query_file: deep-image-96-inner-3M/queries.fbin
+  groundtruth_neighbors_file: deep-image-96-inner-3M/groundtruth.neighbors.ibin
+  dims: 96
+  distance: euclidean

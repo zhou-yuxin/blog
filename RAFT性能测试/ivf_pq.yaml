@@ -1,0 +1,13 @@
+name: raft_ivf_pq
+groups:
+  base:
+    build:
+      nlist: [10240]
+      pq_dim: [96]
+      pq_bits: [8]
+    search:
+      nprobe: [40]
+      internalDistanceDtype: ["float"]
+      smemLutDtype: ["fp8"]
+      refine_ratio: [1]
+  
