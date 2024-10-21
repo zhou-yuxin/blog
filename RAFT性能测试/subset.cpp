@@ -1,9 +1,11 @@
-#include <time.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+#include <random>
+#include <algorithm>
 
 int main(int argc, const char** argv) {
     uint32_t n;
@@ -41,12 +43,18 @@ int main(int argc, const char** argv) {
         fprintf(stderr, "failed to write dimension of vectors\n");
         return 1;
     }
+    printf("randomly select %u vectors\n", n);
+    uint32_t* ids = new uint32_t[n_vector];
+    for(uint32_t i = 0; i < n_vector; i++) {
+        ids[i] = i;
+    }
+    std::random_device random;
+    std::mt19937 mt(random());
+    std::shuffle(ids, ids + n_vector, mt);
     size_t vector_size = sizeof(float) * n_dim;
     void* buffer = malloc(vector_size);
-    srand(time(nullptr));
-    printf("randomly select %u vectors\n", n);
     for(uint32_t i = 0; i < n; i++) {
-        uint32_t j = rand() % n_vector;
+        uint32_t j = ids[i];
         if(pread(input, buffer, vector_size, 8 + vector_size * j) != vector_size) {
             fprintf(stderr, "failed to read vector %u\n", j);
             return 1;
@@ -61,6 +69,7 @@ int main(int argc, const char** argv) {
         }
     }
     printf("\n");
+    delete[] ids;
     close(input);
     close(output);
     return 0;
